@@ -1,0 +1,59 @@
+type Block @jsonField {
+  number: Int!
+  specVersion: Int!
+  hash: String!
+}
+
+type CrowdloanMemo @entity {
+  id: ID!
+
+  who: String!
+  paraId: Int!
+  memo: String
+  timestamp: Date
+
+  block: Block #create relation to block
+}
+
+type CrowdloanWhoStatistics @entity {
+  id: ID! # memo
+  user: String
+  totalBalance: BigInt!
+  totalPower: BigInt!
+
+  contributors: [CrowdloanContributed] @derivedFrom(field: "whoStatistics")
+}
+
+type CrowdloanReferStatistics @entity {
+  id: ID!
+
+  user: String!
+  totalBalance: BigInt!
+  totalPower: BigInt!
+
+  contributors: [CrowdloanContributed] @derivedFrom(field: "referStatistics")
+}
+
+type CrowdloanContributed @entity {
+  id: ID!
+
+  who: String! # 被邀请人
+  refer: String # 邀请人 = memo
+  balance: BigInt!
+  powerWho: BigInt! # balance * (block < BLOCK ? 1.2 : 1.0) * (refer == nil ? 1.0 : 1.05)
+  powerRefer: BigInt # balance * (block < BLOCK ? 1.2 : 1.0) * (refer == nil ? 0 : 0.05)
+  timestamp: Date
+  paraId: Int!
+  extrinsicId: String!
+
+  whoStatistics: CrowdloanWhoStatistics
+  referStatistics: CrowdloanReferStatistics
+  block: Block
+}
+
+type Account @entity {
+  id: ID!
+
+  contributedTotalCount: Int
+  contributedTotal: BigInt
+}
