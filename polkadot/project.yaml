@@ -14,7 +14,7 @@ network:
 
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 7560563
+    startBlock: 7667185
     mapping:
       file: ./dist/index.js
       handlers:
@@ -22,3 +22,4 @@ dataSources:
           kind: substrate/EventHandler
           filter:
             module: crowdloan
+            method: Contributed
