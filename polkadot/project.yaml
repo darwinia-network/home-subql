@@ -23,3 +23,8 @@ dataSources:
           filter:
             module: crowdloan
             method: Contributed
+        - handler: handleMemoEvent
+          kind: substrate/EventHandler
+          filter:
+            module: crowdloan
+            method: MemoUpdated

@@ -10,4 +10,10 @@ export async function handleEvent(event: SubstrateEvent): Promise<void> {
   await entity.save();
 }
 
+export async function handleMemoEvent(event: SubstrateEvent): Promise<void> {
+  const entity = new EventHandler(event);
+
+  await entity.save();
+}
+
 // export async function handleCall(extrinsic: SubstrateExtrinsic): Promise<void> {}
