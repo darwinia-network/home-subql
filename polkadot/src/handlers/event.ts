@@ -56,10 +56,7 @@ export class EventHandler {
   }
 
   public async save() {
-    if (
-      this.section !== 'crowdloan' ||
-      (this.section === 'crowdloan' && this.method === 'create')
-    ) {
+    if (this.method === 'create') {
       return;
     }
 
