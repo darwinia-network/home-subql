@@ -101,12 +101,12 @@ export class EventHandler {
   }
 
   private async ensureMemoUpdated() {
-    const { event, block } = this.event;
+    const { event, block, extrinsic } = this.event;
     const [account] = JSON.parse(event.data.toString()) as [string, number, number];
     const target = await CrowdloanMemo.get(account);
 
     if (!target) {
-      const memoEvent = block.events.find((item) => item.event.method === 'MemoUpdated');
+      const memoEvent = extrinsic?.events.find((item) => item.event.method === 'MemoUpdated');
 
       if (memoEvent) {
         await this.handleMemoUpdate({ event: memoEvent.event, block });
