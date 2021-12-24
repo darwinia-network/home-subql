@@ -26,6 +26,9 @@ services:
     command:
       - -f=/app
       - --local
+      - --profiler
+      - --scale-batch-size
+      - --batch-size=100
 
   graphql-engine:
     image: onfinality/subql-query:latest
@@ -44,4 +47,3 @@ services:
     command:
       - --name=app
       - --playground
-      - --indexer=http://subquery-node:3000
