@@ -4,7 +4,7 @@ import { AccountHandler } from './account';
 import { CrowdloanWho } from './crowdloanWho';
 import { CrowdloanRefer } from './crowdloanRefer';
 
-const START_BLOCK = BigInt(7560563);
+const REWARD_EARLY_END_BLOCK = BigInt(8263710); // stage 1: 7560563
 const PARA_ID = 2003;
 
 export class EventHandler {
@@ -82,7 +82,7 @@ export class EventHandler {
   }: Pick<SubstrateEvent, 'event' | 'block'>) {
     const { timestamp } = block;
     const [account, paraId, memo] = JSON.parse(data.toString());
-    
+
     if (paraId !== PARA_ID) {
       return;
     }
@@ -135,7 +135,7 @@ export class EventHandler {
 
     const refer = (await CrowdloanMemo.get(account))?.memo || null;
     const rewardEarly =
-      block.header.number.toBigInt() < START_BLOCK ? balance / BigInt(5) : BigInt(0);
+      block.header.number.toBigInt() < REWARD_EARLY_END_BLOCK ? balance / BigInt(5) : BigInt(0);
     const powerBase = balance + rewardEarly;
     const powerWho = powerBase + (!refer ? BigInt(0) : powerBase / BigInt(20));
     const powerRefer = !refer ? BigInt(0) : powerBase / BigInt(20);
