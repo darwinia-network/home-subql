@@ -5,6 +5,7 @@ import { CrowdloanWho } from './crowdloanWho';
 import { CrowdloanRefer } from './crowdloanRefer';
 
 const START_BLOCK = BigInt(7560563);
+const PARA_ID = 2003;
 
 export class EventHandler {
   private event: SubstrateEvent;
@@ -81,7 +82,8 @@ export class EventHandler {
   }: Pick<SubstrateEvent, 'event' | 'block'>) {
     const { timestamp } = block;
     const [account, paraId, memo] = JSON.parse(data.toString());
-    if (paraId !== 2003) {
+    
+    if (paraId !== PARA_ID) {
       return;
     }
 
@@ -122,7 +124,7 @@ export class EventHandler {
     } = this.event;
     const [account, paraId, amount] = JSON.parse(data.toString()) as [string, number, number];
 
-    if (paraId !== 2003) {
+    if (paraId !== PARA_ID) {
       return;
     }
 
