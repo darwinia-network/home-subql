@@ -4,7 +4,7 @@ import { AccountHandler } from './account';
 import { CrowdloanWho } from './crowdloanWho';
 import { CrowdloanRefer } from './crowdloanRefer';
 
-const START_BLOCK = BigInt(10914000);
+const REWARD_EARLY_END_BLOCK = BigInt(10914000);
 const PARA_ID = 2105;
 
 export class EventHandler {
@@ -138,7 +138,7 @@ export class EventHandler {
 
     const refer = (await CrowdloanMemo.get(account))?.memo || null;
     const rewardEarly =
-      block.header.number.toBigInt() < START_BLOCK ? balance / BigInt(5) : BigInt(0);
+      block.header.number.toBigInt() < REWARD_EARLY_END_BLOCK ? balance / BigInt(5) : BigInt(0);
     const powerBase = balance + rewardEarly;
     const powerWho = powerBase + (!refer ? BigInt(0) : powerBase / BigInt(20));
     const powerRefer = !refer ? BigInt(0) : powerBase / BigInt(20);
