@@ -190,17 +190,17 @@ export class EventHandler {
 
   private calcPowerBase(blockNumber: bigint, amount: bigint): bigint {
     if (blockNumber < REWARD_EARLY_END_BLOCK) {
-      return amount + amount / BigInt(5);
+      return amount + amount / BigInt(5); // 1.2
     }
 
     if (blockNumber > REWARD_EARLY_END_BLOCK && blockNumber < WIN_END_PERIOD_START_BLOCK) {
-      return amount;
+      return amount; // 1.0
     }
 
     if (blockNumber > WIN_END_PERIOD_START_BLOCK && blockNumber < WIN_END_PERIOD_END_BLOCK) {
       return (
-        ((WIN_END_PERIOD_END_BLOCK - WIN_END_PERIOD_START_BLOCK) * amount) /
-        (WIN_END_PERIOD_END_BLOCK - blockNumber)
+        ((WIN_END_PERIOD_END_BLOCK - blockNumber) * amount) /
+        (WIN_END_PERIOD_END_BLOCK - WIN_END_PERIOD_START_BLOCK)
       );
     }
 
