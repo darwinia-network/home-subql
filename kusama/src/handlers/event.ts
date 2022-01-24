@@ -12,7 +12,18 @@ const WIN_END_PERIOD_START_BLOCK = BigInt(11014800);
 const WIN_END_PERIOD_END_BLOCK = BigInt(11087040);
 const PARA_ID = 2105;
 
-const TOP_TEN = [];
+const TOP_TEN = [
+  'Fc2rXRokFoJbpQ9VAwGDgoQKDrYPvZBFi16rPyKoqDUvyGu',
+  'Hpu7n9mhewVfgRaTzKPNbEk7SeXm1xBLjJdA3ZSf5DRXRDf',
+  'GAmT23RCcuK4oD2qRnm5utXpnEfWqmuvKbv5VsNGyza3nnX',
+  'HWoajVbXuxQNeuytNMcCfHT62gxhiQQPBogU3eFjJZ7EFFQ',
+  'FLsPEX98tmYKtDW5rbVE9PuaHMoLNEFHBkom5EtBEtbPMX2',
+  'Gc7tV5kQXDvzPggfqXtTxpm4W2w2pvvMb52zQpxYKBFd78R',
+  'J6StpzuBtq4rn3ZmMgH16qCNxjSHtvnjN4xRygvvyM9vD1M',
+  'Dr415s6Fp7zUx93x6Limvm3VC5Qz3QLMBxpdwj1JV5vG4m4',
+  'DoYqwN3bjYsg6zLrPK3zNXxynA6QCTPYvQS5Am4jjNBdoAi',
+  'GJChvefTC65EGQH5iqT7xbsNabVAZpVA5iQk8ej4TVE5Sza',
+];
 
 export class EventHandler {
   private event: SubstrateEvent;
