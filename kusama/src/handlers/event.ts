@@ -4,8 +4,26 @@ import { AccountHandler } from './account';
 import { CrowdloanWho } from './crowdloanWho';
 import { CrowdloanRefer } from './crowdloanRefer';
 
+// < REWARD_EARLY_END_BLOCK 1.2
+// REWARD_EARLY_END_BLOCK < block_number < WIN_END_PERIOD_START_BLOCK: 1
+// WIN_END_PERIOD_START_BLOCK < block_number < WIN_END_PERIOD_EDN_BLOCK:  线性递减 1 -> 0 e.g: 1000 --- 10000 10001  length: 10000 - 10000 = 9000 10000 -10001 = 89999 powerBaseWeight = 8999/9000  power = powerBaseWeight * amount
 const REWARD_EARLY_END_BLOCK = BigInt(10914000);
+const WIN_END_PERIOD_START_BLOCK = BigInt(11014800);
+const WIN_END_PERIOD_END_BLOCK = BigInt(11087040);
 const PARA_ID = 2105;
+
+const TOP_TEN = [
+  'Fc2rXRokFoJbpQ9VAwGDgoQKDrYPvZBFi16rPyKoqDUvyGu',
+  'Hpu7n9mhewVfgRaTzKPNbEk7SeXm1xBLjJdA3ZSf5DRXRDf',
+  'GAmT23RCcuK4oD2qRnm5utXpnEfWqmuvKbv5VsNGyza3nnX',
+  'HWoajVbXuxQNeuytNMcCfHT62gxhiQQPBogU3eFjJZ7EFFQ',
+  'FLsPEX98tmYKtDW5rbVE9PuaHMoLNEFHBkom5EtBEtbPMX2',
+  'Gc7tV5kQXDvzPggfqXtTxpm4W2w2pvvMb52zQpxYKBFd78R',
+  'J6StpzuBtq4rn3ZmMgH16qCNxjSHtvnjN4xRygvvyM9vD1M',
+  'Dr415s6Fp7zUx93x6Limvm3VC5Qz3QLMBxpdwj1JV5vG4m4',
+  'DoYqwN3bjYsg6zLrPK3zNXxynA6QCTPYvQS5Am4jjNBdoAi',
+  'GJChvefTC65EGQH5iqT7xbsNabVAZpVA5iQk8ej4TVE5Sza',
+];
 
 export class EventHandler {
   private event: SubstrateEvent;
@@ -85,7 +103,7 @@ export class EventHandler {
   }: Pick<SubstrateEvent, 'event' | 'block'>) {
     const { timestamp } = block;
     const [account, paraId, memo] = JSON.parse(data.toString());
-    
+
     if (paraId !== PARA_ID) {
       return;
     }
@@ -137,11 +155,10 @@ export class EventHandler {
     await AccountHandler.updateCrowdloanStatistic(account, balance);
 
     const refer = (await CrowdloanMemo.get(account))?.memo || null;
-    const rewardEarly =
-      block.header.number.toBigInt() < REWARD_EARLY_END_BLOCK ? balance / BigInt(5) : BigInt(0);
-    const powerBase = balance + rewardEarly;
+    const blockNumber = block.header.number.toBigInt();
+    const powerBase = this.calcPowerBase(blockNumber, balance);
     const powerWho = powerBase + (!refer ? BigInt(0) : powerBase / BigInt(20));
-    const powerRefer = !refer ? BigInt(0) : powerBase / BigInt(20);
+    const powerRefer = !refer ? BigInt(0) : this.calcReferReward(powerBase, account);
     const instance = new CrowdloanContributed(
       block.header.number.toString() + '-' + idx.toString(10)
     );
@@ -180,5 +197,42 @@ export class EventHandler {
       number: block.block.header.number.toNumber(),
       specVersion: block.specVersion,
     };
+  }
+
+  private calcPowerBase(blockNumber: bigint, amount: bigint): bigint {
+    if (blockNumber < REWARD_EARLY_END_BLOCK) {
+      return amount + amount / BigInt(5); // 1.2
+    }
+
+    if (blockNumber > REWARD_EARLY_END_BLOCK && blockNumber < WIN_END_PERIOD_START_BLOCK) {
+      return amount; // 1.0
+    }
+
+    if (blockNumber > WIN_END_PERIOD_START_BLOCK && blockNumber < WIN_END_PERIOD_END_BLOCK) {
+      return (
+        ((WIN_END_PERIOD_END_BLOCK - blockNumber) * amount) /
+        (WIN_END_PERIOD_END_BLOCK - WIN_END_PERIOD_START_BLOCK)
+      );
+    }
+
+    return BigInt(0);
+  }
+
+  private calcReferReward(powerBase: bigint, account: string): bigint {
+    const index = TOP_TEN.findIndex((item) => item === account);
+
+    if (index === 0) {
+      return (powerBase * BigInt(8)) / BigInt(100);
+    }
+
+    if (index > 0 && index < 5) {
+      return (powerBase * BigInt(7)) / BigInt(100);
+    }
+
+    if (index >= 5) {
+      return (powerBase * BigInt(6)) / BigInt(100);
+    }
+
+    return (powerBase * BigInt(5)) / BigInt(100);
   }
 }
