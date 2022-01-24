@@ -198,11 +198,10 @@ export class EventHandler {
     }
 
     if (blockNumber > WIN_END_PERIOD_START_BLOCK && blockNumber < WIN_END_PERIOD_END_BLOCK) {
-      const powerWeight =
-        (WIN_END_PERIOD_END_BLOCK - WIN_END_PERIOD_START_BLOCK) /
-        (WIN_END_PERIOD_END_BLOCK - blockNumber);
-
-      return amount * powerWeight;
+      return (
+        ((WIN_END_PERIOD_END_BLOCK - WIN_END_PERIOD_START_BLOCK) * amount) /
+        (WIN_END_PERIOD_END_BLOCK - blockNumber)
+      );
     }
 
     return BigInt(0);
@@ -210,20 +209,19 @@ export class EventHandler {
 
   private calcReferReward(powerBase: bigint, account: string): bigint {
     const index = TOP_TEN.findIndex((item) => item === account);
-    const precision = 9;
 
     if (index === 0) {
-      return powerBase * BigInt(100 ) / BigInt(8);
+      return (powerBase * BigInt(8)) / BigInt(100);
     }
 
     if (index > 0 && index < 5) {
-      return powerBase * BigInt(100) / BigInt(7);
+      return (powerBase * BigInt(7)) / BigInt(100);
     }
 
     if (index >= 5) {
-      return powerBase * BigInt(100) / BigInt(6);
+      return (powerBase * BigInt(6)) / BigInt(100);
     }
 
-    return powerBase * BigInt(100) / BigInt(5);
+    return (powerBase * BigInt(5)) / BigInt(100);
   }
 }
