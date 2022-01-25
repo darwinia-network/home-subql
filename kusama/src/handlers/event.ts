@@ -157,7 +157,7 @@ export class EventHandler {
     const refer = (await CrowdloanMemo.get(account))?.memo || null;
     const blockNumber = block.header.number.toBigInt();
     const powerBase = this.calcPowerBase(blockNumber, balance);
-    const powerWho = powerBase + (!refer ? BigInt(0) : powerBase / BigInt(20));
+    const powerWho = powerBase + (!refer ? BigInt(0) : this.calcReferReward(powerBase, account));
     const powerRefer = !refer ? BigInt(0) : this.calcReferReward(powerBase, account);
     const instance = new CrowdloanContributed(
       block.header.number.toString() + '-' + idx.toString(10)
